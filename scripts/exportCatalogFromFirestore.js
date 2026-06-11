@@ -125,34 +125,21 @@ async function exportCatalog() {
     process.exit(0);
   }
 
-  // Mapear documentos a objetos planos (sin campos internos de Firestore)
+  // Mantener el catálogo público con el mismo formato histórico:
+  // array plano de cursos sin metadata adicional ni ID interno de Firestore.
   const courses = snapshot.docs.map((doc) => {
     const data = doc.data();
-    return {
-      id: doc.id,
-      ...data,
-    };
+    return data;
   });
 
   const sortedCourses = sortCourses(courses);
-  const catalogVersion = Date.now().toString();
-  const generatedAt = new Date().toISOString();
-
-  const output = {
-    generatedAt,
-    catalogVersion,
-    totalCourses: sortedCourses.length,
-    courses: sortedCourses,
-  };
 
   // Escribir el JSON con indentación legible
-  writeFileSync(OUTPUT_PATH, JSON.stringify(output, null, 2), 'utf-8');
+  writeFileSync(OUTPUT_PATH, JSON.stringify(sortedCourses, null, 2), 'utf-8');
 
   console.log('✅ Catálogo exportado exitosamente');
   console.log(`   📁 Archivo: public/courses.json`);
   console.log(`   📊 Total cursos: ${sortedCourses.length}`);
-  console.log(`   🕐 Generado en: ${generatedAt}`);
-  console.log(`   🔖 Versión: ${catalogVersion}`);
   console.log('');
   console.log('👉 Próximos pasos:');
   console.log('   git add public/courses.json');
