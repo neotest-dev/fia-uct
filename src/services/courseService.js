@@ -4,6 +4,7 @@ import {
   doc,
   addDoc,
   updateDoc,
+  deleteDoc,
   setDoc,
   query,
   where,
@@ -231,6 +232,27 @@ export async function createCourse(courseData) {
 }
 
 /**
+ * Obtiene un curso desde Firestore por su código (1 sola lectura).
+ * Se usa exclusivamente en el panel admin para obtener el ID del documento.
+ * No usa suscripción en tiempo real para minimizar consumo.
+ * @param {string} courseCode
+ * @returns {Promise<Object|null>}
+ */
+export async function getFirestoreCourseByCode(courseCode) {
+  if (!isFirebaseConfigured || !db) {
+    throw new Error('Firebase no está configurado. Configura el archivo .env');
+  }
+
+  const q = query(collection(db, COURSES_COLLECTION), where('codigo', '==', courseCode));
+  const snapshot = await getDocs(q);
+
+  if (snapshot.empty) return null;
+
+  const docSnap = snapshot.docs[0];
+  return { id: docSnap.id, ...docSnap.data() };
+}
+
+/**
  * Actualiza un curso existente en Firestore (solo admin autenticado).
  * Después de editar, ejecutar `npm run export:catalog` y hacer git push
  * para que los visitantes públicos vean el cambio.
@@ -245,6 +267,26 @@ export async function updateCourse(courseId, courseData) {
   logFirestoreWrite(`updateCourse (${courseId})`);
   const courseRef = doc(db, COURSES_COLLECTION, courseId);
   await updateDoc(courseRef, courseData);
+
+  // Invalidar caché en memoria del admin (no afecta a visitantes)
+  catalogCache = null;
+  await updateRemoteCatalogVersion();
+}
+
+/**
+ * Elimina un curso de Firestore (solo admin autenticado).
+ * Después de eliminar, ejecutar `npm run export:catalog` y hacer git push
+ * para que los visitantes públicos vean el cambio.
+ * @param {string} courseId - ID de documento de Firestore
+ */
+export async function deleteCourse(courseId) {
+  if (!isFirebaseConfigured || !db) {
+    throw new Error('Firebase no está configurado. Configura el archivo .env');
+  }
+
+  logFirestoreWrite(`deleteCourse (${courseId})`);
+  const courseRef = doc(db, COURSES_COLLECTION, courseId);
+  await deleteDoc(courseRef);
 
   // Invalidar caché en memoria del admin (no afecta a visitantes)
   catalogCache = null;

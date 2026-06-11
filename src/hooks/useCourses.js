@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { subscribeToCourse, getCourseByCode } from '../services/courseService';
+import { getCourseByCode } from '../services/courseService';
 
 /**
  * Generic hook for async data fetching with loading and error states.
