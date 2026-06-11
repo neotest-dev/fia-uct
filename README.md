@@ -152,6 +152,24 @@ Para `GITHUB_TOKEN` en Vercel, usa un **Fine-grained personal access token** con
 
 No reutilices el token automático interno de GitHub Actions en Vercel.
 
+### Permisos del workflow en GitHub
+
+Para que el workflow pueda hacer commit y push de `public/courses.json`:
+
+1. Ve a **GitHub → Settings → Actions → General**.
+2. En **Workflow permissions**, selecciona **Read and write permissions**.
+3. Guarda los cambios.
+
+Además, el workflow `export-catalog.yml` debe ejecutarse con permisos de escritura sobre el contenido del repositorio.
+
+Si el paso `Commit y push del catálogo actualizado` falla con error `403`, revisa primero:
+
+* que `Workflow permissions` esté en `Read and write`
+* que la rama `main` no tenga reglas de protección que bloqueen pushes automáticos
+* que el repositorio permita a GitHub Actions escribir en la rama principal
+
+En este proyecto, si no hay reglas activas en **Settings → Branches**, entonces la rama `main` no está protegida.
+
 ### Reglas de Firestore recomendadas
 
 ```js
@@ -197,6 +215,34 @@ service cloud.firestore {
 5. Abre GitHub Actions y confirma que arrancó `Exportar catálogo de cursos a courses.json`.
 6. Espera el commit automático y el redeploy de Vercel.
 7. Revisa la vista pública para confirmar que el cambio ya llegó al JSON estático.
+
+### Checklist de configuración completa
+
+Antes de probar en producción, verifica todo esto:
+
+#### Firebase
+* Existe `users/{uid}` para el admin autenticado.
+* Ese documento tiene `role: "admin"`.
+* Las reglas de Firestore permiten escribir en `courses` y `app_metadata` a admins.
+
+#### GitHub
+* Existe el secret `FIREBASE_SERVICE_ACCOUNT_JSON` en **Settings → Secrets and variables → Actions**.
+* En **Settings → Actions → General**, `Workflow permissions` está en **Read and write permissions**.
+* No hay branch protection bloqueando push directo a `main`.
+
+#### Vercel
+* Están configuradas las variables `VITE_FIREBASE_*`.
+* Está configurado `FIREBASE_SERVICE_ACCOUNT_JSON`.
+* Está configurado `GITHUB_TOKEN`.
+* Están configurados `GITHUB_REPO_OWNER` y `GITHUB_REPO_NAME`.
+* Se hizo redeploy después de agregar o cambiar variables.
+
+#### Flujo esperado
+* El admin guarda en Firestore correctamente.
+* `POST /api/trigger-catalog-export` responde `202`.
+* GitHub Action exporta `courses.json`.
+* GitHub hace commit automático si hubo cambios.
+* Vercel redeploya la web pública.
 
 ---
 
