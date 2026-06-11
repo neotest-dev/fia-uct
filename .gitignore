@@ -17,6 +17,11 @@ dist-ssr
 .env.*
 !.env.example
 
+# Firebase Admin SDK — Service Account (NUNCA subir al repositorio)
+*.serviceAccount.json
+firebase-service-account*.json
+service-account*.json
+
 # IDE & system files
 .vscode/*
 !.vscode/extensions.json
