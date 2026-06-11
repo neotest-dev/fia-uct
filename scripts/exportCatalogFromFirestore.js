@@ -107,13 +107,18 @@ function sortCourses(courses) {
  * ni objetos Timestamp serializados por Firestore.
  */
 function toPublicCourse(data) {
-  const {
-    updatedAt,
-    id,
-    ...publicCourse
-  } = data;
-
-  return publicCourse;
+  return {
+    programa: data.programa ?? '',
+    modalidad: data.modalidad ?? '',
+    ciclo: data.ciclo ?? '',
+    codigo: data.codigo ?? '',
+    curso: data.curso ?? '',
+    docente: data.docente ?? '',
+    'mod-curso': data['mod-curso'] ?? '',
+    horas: data.horas ?? 0,
+    creditos: data.creditos ?? 0,
+    tipoEstudio: data.tipoEstudio ?? '',
+  };
 }
 
 // ─── Exportación principal ────────────────────────────────────────────────────

@@ -42,6 +42,41 @@ FIAUct es una aplicación web moderna y premium diseñada para la **Facultad de 
 
 ---
 
+## 🧭 Arquitectura Real del Proyecto
+
+Este proyecto funciona con dos fuentes de datos distintas y eso es intencional:
+
+1. **Público**: lee `public/courses.json`
+2. **Admin**: lee y escribe directamente en Firestore
+
+Cuando un admin crea, edita o elimina un curso:
+
+1. Se guarda primero en Firestore.
+2. La app llama a `/api/trigger-catalog-export`.
+3. La serverless verifica que el usuario sea admin.
+4. La serverless dispara el workflow de GitHub.
+5. GitHub regenera `public/courses.json`.
+6. Vercel redeploya la web pública.
+
+Esto evita consumir lecturas públicas masivas de Firestore y mantiene los cambios administrativos sincronizados.
+
+---
+
+## ⚡ Arranque Rápido
+
+Si clonas este repo desde cero, este es el orden recomendado:
+
+1. `npm install`
+2. Copia `.env.example` a `.env`
+3. Configura las variables `VITE_FIREBASE_*`
+4. Ejecuta `npm run dev`
+5. Si vas a exportar catálogo localmente, agrega `FIREBASE_SERVICE_ACCOUNT_PATH`
+6. Si vas a desplegar en Vercel, configura también las variables server-side y los secrets de GitHub
+
+Si solo quieres correr la app localmente y navegar el catálogo, con `VITE_FIREBASE_*` basta.
+
+---
+
 ## 📦 Instalación y Configuración Local
 
 ### 1. Clonar el repositorio e instalar dependencias
@@ -98,6 +133,38 @@ npm run export:catalog
 
 Este comando requiere `FIREBASE_SERVICE_ACCOUNT_PATH` o `FIREBASE_SERVICE_ACCOUNT_JSON`.
 
+### 7. Formato esperado de `public/courses.json`
+
+El catálogo público debe mantenerse como un **array plano**. No debe incluir metadata raíz ni campos internos de Firestore.
+
+Formato correcto:
+
+```json
+[
+  {
+    "programa": "Arquitectura",
+    "modalidad": "Presencial",
+    "ciclo": "I",
+    "codigo": "PRARNOP240101",
+    "curso": "Introducción a la arquitectura modular",
+    "docente": "Wilmz Diego Mostacero Zarate",
+    "mod-curso": "Presencial",
+    "horas": 3,
+    "creditos": 2,
+    "tipoEstudio": "Estudios Específicos"
+  }
+]
+```
+
+No deben aparecer en el JSON público:
+
+* `id`
+* `updatedAt`
+* `generatedAt`
+* `catalogVersion`
+* `totalCourses`
+* `courses` como objeto raíz
+
 ---
 
 ## ☁️ Despliegue en Vercel
@@ -141,6 +208,17 @@ En el repositorio, configura este secret en **Settings → Secrets and variables
 * `FIREBASE_SERVICE_ACCOUNT_JSON`
 
 Ese secret es el que usa `.github/workflows/export-catalog.yml` para leer Firestore desde GitHub Actions.
+
+### Qué hace el workflow `export-catalog.yml`
+
+El workflow:
+
+1. instala dependencias
+2. ejecuta `npm run export:catalog`
+3. compara `public/courses.json`
+4. si hubo cambios, hace commit y push automático
+
+Si el workflow genera un `courses.json` con formato incorrecto, el problema normalmente está en `scripts/exportCatalogFromFirestore.js`, no en Vercel.
 
 ### Token recomendado para GitHub
 
@@ -215,6 +293,30 @@ service cloud.firestore {
 5. Abre GitHub Actions y confirma que arrancó `Exportar catálogo de cursos a courses.json`.
 6. Espera el commit automático y el redeploy de Vercel.
 7. Revisa la vista pública para confirmar que el cambio ya llegó al JSON estático.
+
+### Qué revisar si algo sale mal
+
+#### El admin guarda en Firestore pero el público no cambia
+* Revisa si `POST /api/trigger-catalog-export` respondió `202`.
+* Revisa si el workflow de GitHub realmente arrancó.
+* Revisa si el workflow pudo hacer `push` a `main`.
+* Revisa si Vercel redeployó después del commit.
+
+#### El workflow falla con `403` al hacer push
+* Revisa **Settings → Actions → General → Workflow permissions**.
+* Debe estar en **Read and write permissions**.
+* Revisa también que `main` no tenga branch protection bloqueando el push.
+
+#### El `courses.json` sale con campos raros o desordenados
+* Revisa `scripts/exportCatalogFromFirestore.js`.
+* El script debe exportar un array plano.
+* El script debe excluir campos internos como `id` y `updatedAt`.
+* El script debe construir los campos en este orden:
+  `programa`, `modalidad`, `ciclo`, `codigo`, `curso`, `docente`, `mod-curso`, `horas`, `creditos`, `tipoEstudio`.
+
+#### El export local falla
+* Verifica que `.env` tenga `FIREBASE_SERVICE_ACCOUNT_PATH` o `FIREBASE_SERVICE_ACCOUNT_JSON`.
+* Verifica que el archivo del service account exista y no esté corrupto.
 
 ### Checklist de configuración completa
 
