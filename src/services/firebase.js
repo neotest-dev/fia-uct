@@ -1,5 +1,5 @@
 import { initializeApp } from 'firebase/app';
-import { getFirestore, enableIndexedDbPersistence } from 'firebase/firestore';
+import { getFirestore } from 'firebase/firestore';
 import { getAuth } from 'firebase/auth';
 
 /**
@@ -31,19 +31,6 @@ if (isFirebaseConfigured) {
     app = initializeApp(firebaseConfig);
     db = getFirestore(app);
     auth = getAuth(app);
-
-    // Habilitar persistencia local offline (IndexedDB)
-    enableIndexedDbPersistence(db).catch((err) => {
-      if (err.code === 'failed-precondition') {
-        // Múltiples pestañas abiertas, solo una puede activar la persistencia a la vez.
-        console.warn('Firestore offline persistence failed: Multiple tabs open.');
-      } else if (err.code === 'unimplemented') {
-        // El navegador no es compatible.
-        console.warn('Firestore offline persistence is not supported by this browser.');
-      } else {
-        console.warn('Error enabling Firestore offline persistence:', err.message);
-      }
-    });
   } catch (error) {
     console.warn('Firebase initialization failed:', error.message);
   }
