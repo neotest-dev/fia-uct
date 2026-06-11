@@ -1,0 +1,73 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 500" width="100%" height="100%">
+  <defs>
+    <!-- Degradado Azul Corporativo -->
+    <linearGradient id="bg-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#051c4d" />
+      <stop offset="60%" stop-color="#072667" />
+      <stop offset="100%" stop-color="#0c3896" />
+    </linearGradient>
+    
+    <!-- Degradado Dorado UCT -->
+    <linearGradient id="gold-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fbbf24" />
+      <stop offset="50%" stop-color="#f59e0b" />
+      <stop offset="100%" stop-color="#d97706" />
+    </linearGradient>
+
+    <!-- Sombra suave para darle volumen -->
+    <filter id="drop-shadow" x="-10%" y="-10%" width="120%" height="120%">
+      <filterDropShadow dx="0" dy="8" stdDeviation="6" flood-color="#000" flood-opacity="0.25"/>
+    </filter>
+  </defs>
+
+  <!-- Escudo Base / Hexágono con bordes suaves -->
+  <path d="M 250 25 
+           L 420 120 
+           L 420 380 
+           L 250 475 
+           L 80 380 
+           L 80 120 
+           Z" 
+        fill="url(#bg-grad)" 
+        stroke="url(#gold-grad)" 
+        stroke-width="12" 
+        stroke-linejoin="round"
+        filter="url(#drop-shadow)"
+  />
+
+  <!-- Detalles de fondo: Líneas de Ingeniería / Redes -->
+  <g opacity="0.12" stroke="#ffffff" stroke-width="2.5" fill="none">
+    <circle cx="250" cy="250" r="180" />
+    <circle cx="250" cy="250" r="120" />
+    <line x1="250" y1="25" x2="250" y2="475" />
+    <line x1="80" y1="250" x2="420" y2="250" />
+    <line x1="129.5" y1="129.5" x2="370.5" y2="370.5" />
+    <line x1="129.5" y1="370.5" x2="370.5" y2="129.5" />
+  </g>
+
+  <!-- Isotipo Central: Unión de Ingeniería, Arquitectura y Academia -->
+  <g transform="translate(0, 15)">
+    <!-- 1. Birrete Académico (Educación / Universidad) -->
+    <!-- Parte superior del birrete (rombo) -->
+    <polygon points="250,140 370,185 250,230 130,185" fill="url(#gold-grad)" filter="url(#drop-shadow)" />
+    
+    <!-- Cinta y base del birrete -->
+    <path d="M 175 203 Q 250 245 325 203 L 325 235 C 325 260 175 260 175 235 Z" fill="#ffffff" />
+    
+    <!-- Borla pendiente -->
+    <path d="M 370 185 L 390 240 L 392 270 C 392 275 388 275 388 270 Z" stroke="url(#gold-grad)" stroke-width="4" fill="none" />
+    <polygon points="385,270 395,270 390,290" fill="url(#gold-grad)" />
+
+    <!-- 2. Compás de Arquitectura (Diseño y Estructura) -->
+    <!-- Brazos del compás en color blanco -->
+    <path d="M 250 215 L 180 375" stroke="#ffffff" stroke-width="14" stroke-linecap="round" />
+    <path d="M 250 215 L 320 375" stroke="#ffffff" stroke-width="14" stroke-linecap="round" />
+    
+    <!-- Bisagra superior del compás -->
+    <circle cx="250" cy="215" r="18" fill="url(#gold-grad)" />
+    <circle cx="250" cy="215" r="8" fill="#ffffff" />
+    
+    <!-- Regla / Nivel de base (Línea horizontal de soporte) -->
+    <line x1="150" y1="375" x2="350" y2="375" stroke="url(#gold-grad)" stroke-width="6" stroke-linecap="round" />
+  </g>
+</svg>

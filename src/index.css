@@ -1,0 +1,87 @@
+@import "tailwindcss";
+
+@theme {
+  --color-primary: #072667;
+  --color-primary-light: #1a3f8f;
+  --color-primary-lighter: #2d58b7;
+  --color-primary-dark: #051b4a;
+  --color-primary-bg: #eef2fa;
+  --color-primary-bg-hover: #dce4f5;
+
+  --color-accent: #f59e0b;
+  --color-accent-light: #fbbf24;
+  --color-accent-dark: #d97706;
+
+  --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-display: 'Outfit', sans-serif;
+}
+
+/* --- Estilos Globales Adicionales --- */
+html {
+  font-size: 16px;
+  scroll-behavior: smooth;
+  color-scheme: light;
+}
+
+body {
+  font-family: var(--font-sans);
+  background-color: #f7f9fd;
+  /* Grilla técnica muy sutil tipo plano para facultad de ingeniería/arquitectura */
+  background-image: 
+    radial-gradient(rgba(7, 38, 103, 0.03) 1.5px, transparent 1.5px),
+    radial-gradient(rgba(7, 38, 103, 0.03) 1.5px, #f7f9fd 1.5px);
+  background-size: 24px 24px;
+  background-position: 0 0, 12px 12px;
+  color: #1a1d26;
+  min-height: 100vh;
+}
+
+/* Animaciones y Clases Utilitarias Personalizadas */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Efecto de esmerilado de vidrio (Glassmorphism) */
+.glass {
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(16px) saturate(180%);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
+  border: 1px solid rgba(226, 230, 239, 0.6);
+}
+
+.glass-dark {
+  background: rgba(7, 38, 103, 0.9);
+  backdrop-filter: blur(16px) saturate(180%);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Personalización del Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(7, 38, 103, 0.15);
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(7, 38, 103, 0.3);
+}

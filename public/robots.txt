@@ -1,0 +1,11 @@
+# robots.txt for FIAUct
+User-agent: *
+Allow: /
+
+# Block admin/private areas
+Disallow: /admin/
+Disallow: /admin/login
+Disallow: /admin/courses/
+
+# Sitemap location (replace domain with your Vercel deployment URL later)
+Sitemap: https://fia-uct.vercel.app/sitemap.xml
