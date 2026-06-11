@@ -103,7 +103,7 @@ export default function CourseDetailPage() {
 
           {user && (
             <Link
-              to={`/admin/courses/${course.codigo}/edit`}
+              to={`/admin/courses/${course.id ?? course.codigo}/edit`}
               className="px-5 py-2.5 text-xs sm:text-sm font-bold text-white bg-gradient-to-r from-accent to-accent-dark hover:shadow-md hover:shadow-accent/20 rounded-xl transition-all duration-200 no-underline active:scale-95 flex items-center justify-center gap-1.5 w-full sm:w-auto"
               id="edit-course-btn"
             >

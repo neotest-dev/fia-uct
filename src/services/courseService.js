@@ -2,6 +2,7 @@ import {
   collection,
   getDocs,
   doc,
+  getDoc,
   addDoc,
   updateDoc,
   deleteDoc,
@@ -10,7 +11,7 @@ import {
   where,
   onSnapshot,
 } from 'firebase/firestore';
-import { db, isFirebaseConfigured } from './firebase';
+import { auth, db, isFirebaseConfigured } from './firebase';
 import { normalizeText } from '../utils/normalizeText';
 
 const COURSES_COLLECTION = 'courses';
@@ -210,9 +211,44 @@ async function updateRemoteCatalogVersion() {
 }
 
 /**
+ * Solicita al backend seguro que dispare el workflow de exportación del catálogo.
+ * Es un proceso best-effort: el curso ya quedó guardado en Firestore aunque falle.
+ */
+async function triggerCatalogExport() {
+  if (!auth?.currentUser) return;
+
+  try {
+    const idToken = await auth.currentUser.getIdToken();
+    const response = await fetch('/api/trigger-catalog-export', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${idToken}`,
+      },
+    });
+
+    if (!response.ok) {
+      let errorMessage = `HTTP ${response.status}`;
+      try {
+        const data = await response.json();
+        errorMessage = data.error || data.details || errorMessage;
+      } catch {
+        // No-op: keep generic HTTP status message.
+      }
+      throw new Error(errorMessage);
+    }
+
+    if (import.meta.env.DEV) {
+      console.info('🚀 Exportación automática del catálogo disparada en GitHub Actions');
+    }
+  } catch (error) {
+    console.error('Error al disparar la exportación automática del catálogo:', error.message);
+  }
+}
+
+/**
  * Crea un nuevo curso en Firestore (solo admin autenticado).
- * Después de crear, ejecutar `npm run export:catalog` y hacer git push
- * para que los visitantes públicos vean el cambio.
+ * Después de crear, el backend intenta disparar la publicación automática del catálogo.
  * @param {Object} courseData
  * @returns {Promise<string>} ID del documento creado
  */
@@ -227,35 +263,34 @@ export async function createCourse(courseData) {
   // Invalidar caché en memoria del admin (no afecta a visitantes)
   catalogCache = null;
   await updateRemoteCatalogVersion();
+  await triggerCatalogExport();
 
   return docRef.id;
 }
 
 /**
- * Obtiene un curso desde Firestore por su código (1 sola lectura).
- * Se usa exclusivamente en el panel admin para obtener el ID del documento.
+ * Obtiene un curso desde Firestore por su ID de documento (1 sola lectura).
+ * Se usa exclusivamente en el panel admin para editar un curso existente.
  * No usa suscripción en tiempo real para minimizar consumo.
- * @param {string} courseCode
+ * @param {string} courseId
  * @returns {Promise<Object|null>}
  */
-export async function getFirestoreCourseByCode(courseCode) {
+export async function getFirestoreCourseById(courseId) {
   if (!isFirebaseConfigured || !db) {
     throw new Error('Firebase no está configurado. Configura el archivo .env');
   }
 
-  const q = query(collection(db, COURSES_COLLECTION), where('codigo', '==', courseCode));
-  const snapshot = await getDocs(q);
+  const courseRef = doc(db, COURSES_COLLECTION, courseId);
+  const docSnap = await getDoc(courseRef);
 
-  if (snapshot.empty) return null;
+  if (!docSnap.exists()) return null;
 
-  const docSnap = snapshot.docs[0];
-  return { id: docSnap.id, ...docSnap.data() };
+  return { ...docSnap.data(), id: docSnap.id };
 }
 
 /**
  * Actualiza un curso existente en Firestore (solo admin autenticado).
- * Después de editar, ejecutar `npm run export:catalog` y hacer git push
- * para que los visitantes públicos vean el cambio.
+ * Después de editar, el backend intenta disparar la publicación automática del catálogo.
  * @param {string} courseId - ID de documento de Firestore
  * @param {Object} courseData
  */
@@ -271,12 +306,12 @@ export async function updateCourse(courseId, courseData) {
   // Invalidar caché en memoria del admin (no afecta a visitantes)
   catalogCache = null;
   await updateRemoteCatalogVersion();
+  await triggerCatalogExport();
 }
 
 /**
  * Elimina un curso de Firestore (solo admin autenticado).
- * Después de eliminar, ejecutar `npm run export:catalog` y hacer git push
- * para que los visitantes públicos vean el cambio.
+ * Después de eliminar, el backend intenta disparar la publicación automática del catálogo.
  * @param {string} courseId - ID de documento de Firestore
  */
 export async function deleteCourse(courseId) {
@@ -291,6 +326,7 @@ export async function deleteCourse(courseId) {
   // Invalidar caché en memoria del admin (no afecta a visitantes)
   catalogCache = null;
   await updateRemoteCatalogVersion();
+  await triggerCatalogExport();
 }
 
 /**
@@ -321,7 +357,7 @@ export function subscribeToCourse(courseCode, callback) {
         callback(null, null);
       } else {
         const docSnap = snapshot.docs[0];
-        callback({ id: docSnap.id, ...docSnap.data() }, null);
+        callback({ ...docSnap.data(), id: docSnap.id }, null);
       }
     },
     (error) => {

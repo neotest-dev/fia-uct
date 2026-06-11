@@ -15,6 +15,7 @@
   "dependencies": {
     "@tanstack/react-query": "^5.101.0",
     "firebase": "^12.14.0",
+    "firebase-admin": "^14.0.0",
     "lucide-react": "^1.17.0",
     "react": "^19.2.6",
     "react-dom": "^19.2.6",
@@ -36,7 +37,6 @@
     "eslint": "^10.3.0",
     "eslint-plugin-react-hooks": "^7.1.1",
     "eslint-plugin-react-refresh": "^0.5.2",
-    "firebase-admin": "^14.0.0",
     "globals": "^17.6.0",
     "jsdom": "^29.1.1",
     "tailwindcss": "^4.3.0",

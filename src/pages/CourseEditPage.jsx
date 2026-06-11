@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
-import { getFirestoreCourseByCode, updateCourse, deleteCourse } from '../services/courseService';
+import { getFirestoreCourseById, updateCourse, deleteCourse } from '../services/courseService';
 import Breadcrumb from '../components/Breadcrumb';
 import CourseForm from '../components/CourseForm';
 import LoadingSpinner from '../components/LoadingSpinner';
@@ -9,7 +9,7 @@ import { SearchX, Trash2 } from 'lucide-react';
 
 /**
  * Protected page for editing an existing course.
- * Loads the course directly from Firestore (1 read) to obtain the document ID.
+ * Loads the course directly from Firestore using the document ID.
  */
 export default function CourseEditPage() {
   const { courseId } = useParams();
@@ -20,13 +20,14 @@ export default function CourseEditPage() {
 
   const { data: course = null, isLoading: loading, error: queryError } = useQuery({
     queryKey: ['admin-course', courseId],
-    queryFn: () => getFirestoreCourseByCode(courseId),
+    queryFn: () => getFirestoreCourseById(courseId),
     enabled: Boolean(courseId),
     staleTime: 5 * 60 * 1000, // 5 min — el admin necesita datos frescos
     retry: 1,
   });
 
   const error = queryError ? (queryError.message || 'Error al cargar curso') : null;
+  const resolvedCourseId = course?.id ?? courseId ?? null;
 
   useEffect(() => {
     if (course) {
@@ -41,14 +42,23 @@ export default function CourseEditPage() {
   ];
 
   const handleSubmit = async (courseData) => {
-    await updateCourse(course.id, courseData);
+    if (!resolvedCourseId) {
+      throw new Error('No se pudo identificar el curso a editar');
+    }
+
+    await updateCourse(resolvedCourseId, courseData);
   };
 
   const handleDelete = async () => {
+    if (!resolvedCourseId) {
+      setDeleteError('No se pudo identificar el curso a eliminar');
+      return;
+    }
+
     setDeleting(true);
     setDeleteError(null);
     try {
-      await deleteCourse(course.id);
+      await deleteCourse(resolvedCourseId);
       navigate('/programs', { replace: true });
     } catch (err) {
       setDeleteError(err.message || 'Error al eliminar el curso');
