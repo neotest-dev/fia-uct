@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { useFetchData } from '../hooks/useCourses';
+import { useQuery } from '@tanstack/react-query';
 import { getFirestoreCourseByCode, updateCourse, deleteCourse } from '../services/courseService';
 import Breadcrumb from '../components/Breadcrumb';
 import CourseForm from '../components/CourseForm';
@@ -18,10 +18,15 @@ export default function CourseEditPage() {
   const [deleting, setDeleting] = useState(false);
   const [deleteError, setDeleteError] = useState(null);
 
-  const { data: course, loading, error } = useFetchData(
-    () => getFirestoreCourseByCode(courseId),
-    [courseId]
-  );
+  const { data: course = null, isLoading: loading, error: queryError } = useQuery({
+    queryKey: ['admin-course', courseId],
+    queryFn: () => getFirestoreCourseByCode(courseId),
+    enabled: Boolean(courseId),
+    staleTime: 5 * 60 * 1000, // 5 min — el admin necesita datos frescos
+    retry: 1,
+  });
+
+  const error = queryError ? (queryError.message || 'Error al cargar curso') : null;
 
   useEffect(() => {
     if (course) {
