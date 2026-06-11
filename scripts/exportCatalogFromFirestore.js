@@ -102,6 +102,20 @@ function sortCourses(courses) {
   });
 }
 
+/**
+ * El catálogo público no debe exponer campos internos del panel admin
+ * ni objetos Timestamp serializados por Firestore.
+ */
+function toPublicCourse(data) {
+  const {
+    updatedAt,
+    id,
+    ...publicCourse
+  } = data;
+
+  return publicCourse;
+}
+
 // ─── Exportación principal ────────────────────────────────────────────────────
 
 async function exportCatalog() {
@@ -129,7 +143,7 @@ async function exportCatalog() {
   // array plano de cursos sin metadata adicional ni ID interno de Firestore.
   const courses = snapshot.docs.map((doc) => {
     const data = doc.data();
-    return data;
+    return toPublicCourse(data);
   });
 
   const sortedCourses = sortCourses(courses);
