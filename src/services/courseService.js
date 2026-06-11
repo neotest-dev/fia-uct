@@ -26,8 +26,11 @@ async function getLocalCourses() {
   return localCoursesCache;
 }
 
+let firestoreCoursesCachePromise = null;
+
 /**
  * Fetches all courses from Firestore, or falls back to local JSON.
+ * Caches the promise to prevent multiple concurrent or subsequent database reads.
  * @returns {Promise<Array>} Array of course objects
  */
 async function getAllCourses() {
@@ -35,18 +38,26 @@ async function getAllCourses() {
     return getLocalCourses();
   }
 
-  try {
-    const snapshot = await getDocs(collection(db, COURSES_COLLECTION));
-    if (snapshot.empty) {
-      // Firestore collection is empty — fall back to local
-      console.info('Firestore collection is empty, using local data');
-      return getLocalCourses();
-    }
-    return snapshot.docs.map((d) => ({ id: d.id, ...d.data() }));
-  } catch (error) {
-    console.warn('Firestore unavailable, falling back to local data:', error.message);
-    return getLocalCourses();
+  if (!firestoreCoursesCachePromise) {
+    firestoreCoursesCachePromise = (async () => {
+      try {
+        const snapshot = await getDocs(collection(db, COURSES_COLLECTION));
+        if (snapshot.empty) {
+          // Firestore collection is empty — fall back to local
+          console.info('Firestore collection is empty, using local data');
+          return getLocalCourses();
+        }
+        return snapshot.docs.map((d) => ({ id: d.id, ...d.data() }));
+      } catch (error) {
+        console.warn('Firestore unavailable, falling back to local data:', error.message);
+        // Reset cache promise on failure to allow retry later
+        firestoreCoursesCachePromise = null;
+        return getLocalCourses();
+      }
+    })();
   }
+
+  return firestoreCoursesCachePromise;
 }
 
 /**
@@ -145,6 +156,8 @@ export async function createCourse(courseData) {
   }
 
   const docRef = await addDoc(collection(db, COURSES_COLLECTION), courseData);
+  // Invalidate cache so next fetch gets the updated list
+  firestoreCoursesCachePromise = null;
   return docRef.id;
 }
 
@@ -160,6 +173,8 @@ export async function updateCourse(courseId, courseData) {
 
   const courseRef = doc(db, COURSES_COLLECTION, courseId);
   await updateDoc(courseRef, courseData);
+  // Invalidate cache so next fetch gets the updated list
+  firestoreCoursesCachePromise = null;
 }
 
 /**
