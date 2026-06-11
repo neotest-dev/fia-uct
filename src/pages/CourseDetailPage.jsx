@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { useRealtimeCourse } from '../hooks/useCourses';
+import { useFetchData } from '../hooks/useCourses';
+import { getCourseByCode } from '../services/courseService';
 import { useAuthContext } from '../context/AuthContext';
 import Breadcrumb from '../components/Breadcrumb';
 import LoadingSpinner from '../components/LoadingSpinner';
@@ -14,7 +15,10 @@ export default function CourseDetailPage() {
   const { courseId } = useParams();
   const { user } = useAuthContext();
 
-  const { data: course, loading, error } = useRealtimeCourse(courseId);
+  const { data: course, loading, error } = useFetchData(
+    () => getCourseByCode(courseId),
+    [courseId]
+  );
 
   useEffect(() => {
     if (course) {

@@ -20,6 +20,7 @@ vi.mock('../context/AuthContext', () => ({
   AuthProvider: ({ children }) => children,
 }));
 
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import CoursesPage from '../pages/CoursesPage';
 import { getCourses } from '../services/courseService';
 
@@ -51,10 +52,21 @@ const mockCourses = [
 ];
 
 function renderWithRouter(component, route = '/programs/Arquitectura/modalities/Presencial/cycles/I/courses') {
+  const queryClient = new QueryClient({
+    defaultOptions: {
+      queries: {
+        retry: false,
+        gcTime: 0,
+      },
+    },
+  });
+
   return render(
-    <MemoryRouter initialEntries={[route]}>
-      {component}
-    </MemoryRouter>
+    <QueryClientProvider client={queryClient}>
+      <MemoryRouter initialEntries={[route]}>
+        {component}
+      </MemoryRouter>
+    </QueryClientProvider>
   );
 }
 

@@ -24,6 +24,7 @@ export default function HomePage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState([]);
   const [searching, setSearching] = useState(false);
+  const [visibleResults, setVisibleResults] = useState(20);
 
   useEffect(() => {
     document.title = 'FIAUct';
@@ -33,18 +34,22 @@ export default function HomePage() {
     setSearchQuery(query);
     if (!query.trim()) {
       setSearchResults([]);
+      setVisibleResults(20);
       return;
     }
     setSearching(true);
     try {
       const results = await searchCourses(query);
       setSearchResults(results);
+      setVisibleResults(20); // Resetear cantidad visible al realizar una nueva búsqueda
     } catch (err) {
       console.error('Search error:', err);
     } finally {
       setSearching(false);
     }
   };
+
+  const displayedResults = searchResults.slice(0, visibleResults);
 
   return (
     <div className="animate-fade-in-up flex flex-col gap-10 max-w-5xl mx-auto py-6">
@@ -61,7 +66,7 @@ export default function HomePage() {
           Explora los programas académicos, modalidades, ciclos y cursos de la Universidad Católica de Trujillo.
         </p>
       </section>
-
+ 
       {/* Search */}
       <div className="w-full max-w-2xl mx-auto">
         <SearchBar
@@ -71,7 +76,7 @@ export default function HomePage() {
           resultsCount={searchQuery ? searchResults.length : undefined}
         />
       </div>
-
+ 
       {/* Search Results */}
       {searchQuery && (
         <section className="mt-4">
@@ -83,17 +88,28 @@ export default function HomePage() {
               <LoadingSpinner text="Buscando..." size="sm" />
             </div>
           ) : searchResults.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {searchResults.map((course, index) => (
-                <Card
-                  key={course.codigo + index}
-                  to={`/courses/${course.codigo}`}
-                  icon={<BookOpen className="w-5 h-5" />}
-                  title={course.curso}
-                  subtitle={`${course.docente} · ${course.programa}`}
-                  tags={[course.ciclo, course['mod-curso'], `${course.creditos} créd.`]}
-                />
-              ))}
+            <div className="flex flex-col gap-6 items-center">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
+                {displayedResults.map((course, index) => (
+                  <Card
+                    key={course.codigo + index}
+                    to={`/courses/${course.codigo}`}
+                    icon={<BookOpen className="w-5 h-5" />}
+                    title={course.curso}
+                    subtitle={`${course.docente} · ${course.programa}`}
+                    tags={[course.ciclo, course['mod-curso'], `${course.creditos} créd.`]}
+                  />
+                ))}
+              </div>
+              
+              {searchResults.length > visibleResults && (
+                <button
+                  onClick={() => setVisibleResults((prev) => prev + 20)}
+                  className="mt-4 px-6 py-3 bg-white border border-slate-200 text-slate-700 font-bold rounded-xl shadow-sm hover:bg-slate-50 active:scale-95 transition-all cursor-pointer flex items-center gap-2 text-sm"
+                >
+                  Cargar más resultados (+{searchResults.length - visibleResults})
+                </button>
+              )}
             </div>
           ) : (
             <div className="text-center py-12 bg-white rounded-2xl border border-slate-200/60 shadow-sm">
