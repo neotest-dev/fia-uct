@@ -12,6 +12,7 @@ import CourseDetailPage from '../pages/CourseDetailPage';
 import LoginPage from '../pages/LoginPage';
 import CourseNewPage from '../pages/CourseNewPage';
 import CourseEditPage from '../pages/CourseEditPage';
+import PrivacyPolicyPage from '../pages/PrivacyPolicyPage';
 import NotFoundPage from '../pages/NotFoundPage';
 
 /**
@@ -29,6 +30,7 @@ export default function AppRouter() {
         <Route path="/programs/:programId/modalities/:modalityId/cycles" element={<CyclesPage />} />
         <Route path="/programs/:programId/modalities/:modalityId/cycles/:cycleId/courses" element={<CoursesPage />} />
         <Route path="/courses/:courseId" element={<CourseDetailPage />} />
+        <Route path="/privacy" element={<PrivacyPolicyPage />} />
 
         {/* Auth */}
         <Route path="/admin/login" element={<LoginPage />} />

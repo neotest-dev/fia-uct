@@ -110,7 +110,13 @@ export default function Layout() {
           </div>
           
           {/* Enlaces */}
-          <div className="flex gap-4">
+          <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 items-center">
+            <Link
+              to="/privacy"
+              className="text-xs sm:text-sm font-semibold text-slate-300 hover:text-white transition-colors no-underline"
+            >
+              Política de privacidad
+            </Link>
             <a
               href="https://www.uct.edu.pe"
               target="_blank"
