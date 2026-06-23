@@ -7863,18 +7863,6 @@
     "programa": "Ingeniería Informática",
     "modalidad": "Presencial",
     "ciclo": "I",
-    "codigo": "PRIINOP06",
-    "curso": "Formación Cristiana",
-    "docente": "Carmen Maria Capuñay Bocanegra",
-    "mod-curso": "Virtual",
-    "horas": 2,
-    "creditos": 2,
-    "tipoEstudio": "Estudios Generales"
-  },
-  {
-    "programa": "Ingeniería Informática",
-    "modalidad": "Presencial",
-    "ciclo": "I",
     "codigo": "PRIINOP07",
     "curso": "Introducción a la Ingeniería Informática",
     "docente": "Maria Elena Quevedo Ciudad",
