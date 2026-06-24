@@ -8523,18 +8523,6 @@
     "programa": "Ingeniería Informática",
     "modalidad": "Presencial",
     "ciclo": "X",
-    "codigo": "PRIINOP62",
-    "curso": "Reconocimiento de Patrones",
-    "docente": "Por definir",
-    "mod-curso": "Presencial",
-    "horas": 6,
-    "creditos": 4,
-    "tipoEstudio": "Estudios de Especialidad"
-  },
-  {
-    "programa": "Ingeniería Informática",
-    "modalidad": "Presencial",
-    "ciclo": "X",
     "codigo": "PRIINOP63",
     "curso": "Tópicos Especiales en Ciberseguridad",
     "docente": "Por definir",
