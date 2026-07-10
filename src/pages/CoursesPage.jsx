@@ -104,7 +104,7 @@ export default function CoursesPage() {
           ))}
         </div>
       ) : (
-        <div className="text-center py-16 bg-white border border-slate-200/60 rounded-3xl shadow-sm text-slate-400 font-medium">
+        <div className="text-center py-16 neu rounded-3xl text-slate-400 font-medium">
           <Inbox className="w-12 h-12 mx-auto text-slate-300 mb-3" />
           <p className="text-sm sm:text-base">
             {searchQuery ? 'No se encontraron cursos con esa búsqueda' : 'No hay cursos disponibles'}

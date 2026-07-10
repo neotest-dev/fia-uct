@@ -36,7 +36,7 @@ export default function SearchBar({ value, onChange, placeholder = 'Buscar curso
         <input
           id="search-input"
           type="text"
-          className="w-full pl-12 pr-12 py-3.5 bg-white border border-slate-200/80 rounded-2xl text-slate-800 placeholder-slate-400 outline-none focus:border-primary focus:ring-4 focus:ring-primary/5 shadow-md shadow-slate-100/50 hover:border-slate-300/80 transition-all duration-300 text-sm sm:text-base font-medium"
+          className="w-full pl-12 pr-12 py-3.5 neu-input rounded-2xl text-slate-800 placeholder-slate-400 outline-none focus:ring-4 focus:ring-primary/10 transition-all duration-300 text-sm sm:text-base font-medium"
           placeholder={placeholder}
           value={localValue}
           onChange={handleChange}
@@ -48,7 +48,7 @@ export default function SearchBar({ value, onChange, placeholder = 'Buscar curso
         </span>
         {localValue && (
           <button
-            className="absolute right-3.5 w-8 h-8 rounded-full flex items-center justify-center text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-all duration-200 cursor-pointer text-sm"
+            className="absolute right-3.5 w-8 h-8 rounded-full flex items-center justify-center text-slate-400 hover:text-slate-700 neu-btn transition-all duration-200 cursor-pointer text-sm"
             onClick={handleClear}
             aria-label="Limpiar búsqueda"
             type="button"
@@ -66,3 +66,4 @@ export default function SearchBar({ value, onChange, placeholder = 'Buscar curso
     </div>
   );
 }
+

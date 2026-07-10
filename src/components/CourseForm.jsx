@@ -72,7 +72,7 @@ export default function CourseForm({ initialData, onSubmit, submitLabel = 'Guard
     try {
       await onSubmit(formData);
       setSuccess(true);
-      setTimeout(() => navigate(-1), 1500);
+      setTimeout(() => navigate(-1), 2200);
     } catch (err) {
       setError(err.message || 'Error al guardar el curso');
     } finally {
@@ -88,10 +88,40 @@ export default function CourseForm({ initialData, onSubmit, submitLabel = 'Guard
           <span>{error}</span>
         </div>
       )}
+      {/* Success modal */}
       {success && (
-        <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-4 text-emerald-600 text-xs sm:text-sm flex items-center gap-2 font-semibold" role="alert">
-          <CheckCircle2 className="w-4 h-4" />
-          <span>Curso guardado exitosamente. Redirigiendo...</span>
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 animate-fade-in"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="success-modal-title"
+        >
+          <div
+            className="animate-slide-down w-full max-w-sm overflow-hidden rounded-3xl"
+            style={{ boxShadow: '0 25px 60px rgba(7,15,35,0.35), 0 8px 20px rgba(7,15,35,0.2)' }}
+          >
+            {/* Header verde */}
+            <div className="bg-gradient-to-br from-emerald-500 to-emerald-700 px-6 pt-8 pb-6 flex flex-col items-center gap-3 text-white relative overflow-hidden">
+              <div className="absolute -top-6 -right-6 w-28 h-28 bg-white/5 rounded-full blur-2xl pointer-events-none" />
+              <div className="absolute -bottom-4 -left-4 w-20 h-20 bg-black/10 rounded-full blur-xl pointer-events-none" />
+              <div className="w-14 h-14 rounded-2xl bg-white/15 border border-white/20 flex items-center justify-center backdrop-blur-sm relative z-10">
+                <CheckCircle2 className="w-7 h-7 text-white" />
+              </div>
+              <div className="text-center relative z-10">
+                <h2 id="success-modal-title" className="text-xl font-black font-display tracking-tight">¡Cambios guardados!</h2>
+                <p className="text-emerald-100/80 text-xs mt-1 font-medium">Redirigiendo en un momento...</p>
+              </div>
+            </div>
+            {/* Body */}
+            <div className="bg-[#f0f3f8] px-6 py-5 flex flex-col items-center gap-3">
+              <p className="text-sm text-slate-600 text-center leading-relaxed">
+                El curso <span className="font-bold text-slate-800">"{formData.curso}"</span> fue actualizado correctamente.
+              </p>
+              <div className="w-full bg-slate-200/60 rounded-full h-1 overflow-hidden">
+                <div className="h-full bg-emerald-500 rounded-full animate-progress" />
+              </div>
+            </div>
+          </div>
         </div>
       )}
 

@@ -26,8 +26,8 @@ export default function Layout() {
               className={({ isActive }) => 
                 `px-3 py-1.5 sm:px-4 sm:py-2 text-xs sm:text-sm font-semibold rounded-xl transition-all duration-200 active:scale-95 no-underline ${
                   isActive 
-                    ? 'bg-primary text-white shadow-md shadow-primary/15' 
-                    : 'text-slate-600 hover:bg-slate-100 hover:text-primary'
+                    ? 'neu-flat bg-primary/5 text-primary' 
+                    : 'neu-btn text-slate-600 hover:text-primary'
                 }`
               }
             >
@@ -44,8 +44,8 @@ export default function Layout() {
                   className={({ isActive }) => 
                     `px-3 py-1.5 sm:px-4 sm:py-2 text-xs sm:text-sm font-semibold rounded-xl transition-all duration-200 active:scale-95 no-underline ${
                       isActive 
-                        ? 'bg-primary text-white shadow-md shadow-primary/15' 
-                        : 'text-slate-600 hover:bg-slate-100 hover:text-primary'
+                        ? 'neu-flat bg-primary/5 text-primary' 
+                        : 'neu-btn text-slate-600 hover:text-primary'
                     }`
                   }
                 >
@@ -59,7 +59,7 @@ export default function Layout() {
                   <User className="w-3 h-3 text-amber-600" /> Admin
                 </span>
                 <button
-                  className="px-3 py-1.5 sm:px-4 sm:py-2 text-xs sm:text-sm font-semibold rounded-xl text-slate-500 hover:bg-red-50 hover:text-red-600 active:scale-95 transition-all duration-200 flex items-center gap-1"
+                  className="px-3 py-1.5 sm:px-4 sm:py-2 text-xs sm:text-sm font-semibold rounded-xl text-slate-500 hover:text-red-600 active:scale-95 transition-all duration-200 flex items-center gap-1 neu-btn"
                   onClick={logout}
                   id="logout-btn"
                   title="Cerrar sesión"
@@ -74,8 +74,8 @@ export default function Layout() {
                 className={({ isActive }) => 
                   `px-3 py-1.5 sm:px-4 sm:py-2 text-xs sm:text-sm font-semibold rounded-xl transition-all duration-200 active:scale-95 no-underline ${
                     isActive 
-                      ? 'bg-primary text-white shadow-md shadow-primary/15' 
-                      : 'text-slate-600 hover:bg-slate-100 hover:text-primary'
+                      ? 'neu-flat bg-primary/5 text-primary' 
+                      : 'neu-btn text-slate-600 hover:text-primary'
                   }`
                 }
               >
@@ -101,7 +101,7 @@ export default function Layout() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 flex flex-col sm:flex-row justify-between items-center gap-6 text-center sm:text-left">
           {/* Logo y Nombre */}
           <div className="flex flex-col sm:flex-row items-center gap-4">
-            <div className="h-10 w-auto bg-white/5 backdrop-blur-md rounded-xl p-1.5 border border-white/5 shadow-inner hover:scale-105 transition-transform duration-300">
+            <div className="h-10 w-auto rounded-xl p-1.5 hover:scale-105 transition-transform duration-300" style={{ boxShadow: '3px 3px 6px rgba(0,0,0,0.3), -2px -2px 4px rgba(255,255,255,0.05)', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.08)' }}>
               <img src="/logo.webp" alt="Logo UCT" className="h-full w-auto object-contain" />
             </div>
             <p className="text-xs sm:text-sm text-slate-300/80 font-bold uppercase tracking-wider leading-relaxed">

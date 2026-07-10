@@ -11,18 +11,19 @@ export default function Card({ to, icon, title, subtitle, tags, children, compac
   return (
     <Link 
       to={to} 
-      className={`relative overflow-hidden bg-white rounded-2xl border border-slate-200/60 shadow-sm hover:shadow-xl hover:-translate-y-1.5 active:scale-[0.98] transition-all duration-300 cursor-pointer flex flex-col group no-underline text-inherit ${
+      className={`relative overflow-hidden neu rounded-2xl hover:-translate-y-1.5 active:scale-[0.98] transition-all duration-300 cursor-pointer flex flex-col group no-underline text-inherit ${
         compact ? 'p-4 gap-2' : 'p-6 gap-3'
       }`}
+      style={{ '--tw-shadow': 'none' }}
       id={`card-${title?.replace(/\s+/g, '-').toLowerCase()}`}
     >
       {/* Top Border Accent Line */}
       <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-primary to-primary-light scale-x-0 group-hover:scale-x-100 origin-left transition-transform duration-300" />
 
       {icon && (
-        <div className={`rounded-xl bg-primary-bg flex items-center justify-center text-primary flex-shrink-0 group-hover:bg-primary group-hover:text-white transition-colors duration-300 shadow-sm shadow-primary/5 ${
+        <div className={`rounded-xl bg-primary-bg flex items-center justify-center text-primary flex-shrink-0 group-hover:bg-primary group-hover:text-white transition-colors duration-300 ${
           compact ? 'w-10 h-10 text-base' : 'w-12 h-12 text-lg'
-        }`}>
+        }`} style={{ boxShadow: 'inset 2px 2px 4px rgba(163,177,198,0.25), inset -2px -2px 4px rgba(255,255,255,0.6)' }}>
           {typeof icon === 'string' ? <span>{icon}</span> : icon}
         </div>
       )}
@@ -39,7 +40,7 @@ export default function Card({ to, icon, title, subtitle, tags, children, compac
           <div className="flex flex-wrap gap-2 mt-2">
             {tags.map((tag, i) => (
               <span 
-                className="inline-flex items-center text-[10px] sm:text-xs font-semibold text-primary bg-primary-bg px-2.5 py-1 rounded-full border border-primary-light/5" 
+                className="inline-flex items-center text-[10px] sm:text-xs font-semibold text-primary bg-primary-bg px-2.5 py-1 rounded-full neu-sm" 
                 key={i}
               >
                 {tag}
@@ -55,3 +56,4 @@ export default function Card({ to, icon, title, subtitle, tags, children, compac
     </Link>
   );
 }
+

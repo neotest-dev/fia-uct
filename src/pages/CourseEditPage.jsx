@@ -1,11 +1,11 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
-import { getFirestoreCourseById, updateCourse, deleteCourse } from '../services/courseService';
+import { getFirestoreCourseById, updateCourse } from '../services/courseService';
 import Breadcrumb from '../components/Breadcrumb';
 import CourseForm from '../components/CourseForm';
 import LoadingSpinner from '../components/LoadingSpinner';
-import { SearchX, Trash2 } from 'lucide-react';
+import { SearchX } from 'lucide-react';
 
 /**
  * Protected page for editing an existing course.
@@ -14,9 +14,6 @@ import { SearchX, Trash2 } from 'lucide-react';
 export default function CourseEditPage() {
   const { courseId } = useParams();
   const navigate = useNavigate();
-  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
-  const [deleting, setDeleting] = useState(false);
-  const [deleteError, setDeleteError] = useState(null);
 
   const { data: course = null, isLoading: loading, error: queryError } = useQuery({
     queryKey: ['admin-course', courseId],
@@ -49,22 +46,6 @@ export default function CourseEditPage() {
     await updateCourse(resolvedCourseId, courseData);
   };
 
-  const handleDelete = async () => {
-    if (!resolvedCourseId) {
-      setDeleteError('No se pudo identificar el curso a eliminar');
-      return;
-    }
-
-    setDeleting(true);
-    setDeleteError(null);
-    try {
-      await deleteCourse(resolvedCourseId);
-      navigate('/programs', { replace: true });
-    } catch (err) {
-      setDeleteError(err.message || 'Error al eliminar el curso');
-      setDeleting(false);
-    }
-  };
 
   if (loading) return (
     <div className="py-20 flex justify-center">
@@ -108,57 +89,6 @@ export default function CourseEditPage() {
         submitLabel="Guardar cambios"
       />
 
-      {/* Zona de eliminación */}
-      <div className="bg-white border border-red-200/60 p-6 rounded-2xl shadow-sm mt-4">
-        <h2 className="text-xs font-bold text-red-500 uppercase tracking-wider mb-2">
-          Zona peligrosa
-        </h2>
-        <p className="text-xs sm:text-sm text-slate-500 mb-4">
-          Eliminar este curso es irreversible. Se eliminará permanentemente de Firestore.
-          Recuerda ejecutar <code className="bg-slate-100 px-1.5 py-0.5 rounded text-[11px] font-mono font-bold">npm run export:catalog</code> después para actualizar el catálogo público.
-        </p>
-
-        {deleteError && (
-          <div className="bg-red-50 border border-red-200 rounded-xl p-3 text-red-600 text-xs font-semibold mb-3" role="alert">
-            {deleteError}
-          </div>
-        )}
-
-        {!showDeleteConfirm ? (
-          <button
-            type="button"
-            className="px-4 py-2.5 text-xs sm:text-sm font-bold rounded-xl text-red-600 border-2 border-red-200 hover:bg-red-50 transition-all active:scale-95 cursor-pointer flex items-center gap-1.5"
-            onClick={() => setShowDeleteConfirm(true)}
-          >
-            <Trash2 className="w-4 h-4" />
-            <span>Eliminar curso</span>
-          </button>
-        ) : (
-          <div className="flex flex-col gap-3 bg-red-50/50 border border-red-200/50 rounded-xl p-4">
-            <p className="text-xs sm:text-sm font-bold text-red-700">
-              ¿Estás seguro de eliminar <span className="text-red-900">"{course.curso}"</span>?
-            </p>
-            <div className="flex gap-2">
-              <button
-                type="button"
-                className="px-4 py-2 text-xs sm:text-sm font-bold rounded-xl text-white bg-red-600 hover:bg-red-700 transition-all active:scale-95 cursor-pointer disabled:opacity-50"
-                onClick={handleDelete}
-                disabled={deleting}
-              >
-                {deleting ? 'Eliminando...' : 'Sí, eliminar'}
-              </button>
-              <button
-                type="button"
-                className="px-4 py-2 text-xs sm:text-sm font-bold rounded-xl text-slate-500 hover:bg-slate-100 transition-all active:scale-95 cursor-pointer"
-                onClick={() => setShowDeleteConfirm(false)}
-                disabled={deleting}
-              >
-                Cancelar
-              </button>
-            </div>
-          </div>
-        )}
-      </div>
     </div>
   );
 }

@@ -12,8 +12,11 @@ export default function LoadingSpinner({ text = 'Cargando...', size = 'md' }) {
 
   return (
     <div className="flex flex-col items-center justify-center gap-3 py-12" role="status" aria-label="Cargando">
-      <div className={`${sizeClass} border-slate-200 border-t-primary rounded-full animate-spin`} />
+      <div className="p-4 rounded-full neu-sm flex items-center justify-center">
+        <div className={`${sizeClass} border-slate-200 border-t-primary rounded-full animate-spin`} />
+      </div>
       {text && <p className="text-xs sm:text-sm text-slate-400 font-semibold tracking-wider">{text}</p>}
     </div>
   );
 }
+

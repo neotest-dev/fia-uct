@@ -40,7 +40,7 @@ export default function LoginPage() {
 
   return (
     <div className="flex items-center justify-center min-h-[60vh] animate-fade-in-up px-4">
-      <div className="w-full max-w-[400px] bg-white rounded-3xl border border-slate-200/60 shadow-xl overflow-hidden">
+      <div className="w-full max-w-[400px] neu rounded-3xl overflow-hidden">
         {/* Card Header */}
         <div className="bg-gradient-to-br from-primary to-primary-dark p-8 pb-6 text-center text-white relative">
           <div className="w-14 h-14 rounded-2xl bg-white/10 flex items-center justify-center text-2xl mx-auto mb-4 backdrop-blur-md border border-white/10 shadow-sm shadow-black/5">
@@ -70,7 +70,7 @@ export default function LoginPage() {
             <input
               id="login-email"
               type="email"
-              className="w-full px-4 py-3 bg-slate-50 hover:bg-slate-100/50 border border-slate-200/80 rounded-xl text-slate-800 placeholder-slate-400 outline-none focus:bg-white focus:border-primary focus:ring-4 focus:ring-primary/5 transition-all duration-200 text-sm font-semibold"
+              className="w-full px-4 py-3 neu-input rounded-xl text-slate-800 placeholder-slate-400 outline-none focus:ring-4 focus:ring-primary/10 transition-all duration-200 text-sm font-semibold"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="admin@uct.pe"
@@ -88,7 +88,7 @@ export default function LoginPage() {
               <input
                 id="login-password"
                 type={showPassword ? 'text' : 'password'}
-                className="w-full pl-4 pr-11 py-3 bg-slate-50 hover:bg-slate-100/50 border border-slate-200/80 rounded-xl text-slate-800 placeholder-slate-400 outline-none focus:bg-white focus:border-primary focus:ring-4 focus:ring-primary/5 transition-all duration-200 text-sm font-semibold"
+                className="w-full pl-4 pr-11 py-3 neu-input rounded-xl text-slate-800 placeholder-slate-400 outline-none focus:ring-4 focus:ring-primary/10 transition-all duration-200 text-sm font-semibold"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="••••••••"
@@ -108,7 +108,8 @@ export default function LoginPage() {
 
           <button
             type="submit"
-            className="w-full py-3.5 mt-2 bg-gradient-to-r from-primary to-primary-light text-white font-bold rounded-xl shadow-md hover:shadow-lg hover:shadow-primary/10 hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.98] transition-all duration-200 text-sm cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+            className="w-full py-3.5 mt-2 bg-gradient-to-r from-primary to-primary-light text-white font-bold rounded-xl hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.98] transition-all duration-200 text-sm cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+            style={{ boxShadow: '4px 4px 10px rgba(7,38,103,0.35), -2px -2px 6px rgba(255,255,255,0.15)' }}
             disabled={submitting || loading}
             id="login-submit-btn"
           >
