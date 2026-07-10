@@ -1,24 +1,38 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { useFetchData } from '../hooks/useCourses';
-import { getCourseByCode } from '../services/courseService';
+import { getCourseByCode, subscribeToCourse } from '../services/courseService';
 import { useAuthContext } from '../context/AuthContext';
 import Breadcrumb from '../components/Breadcrumb';
 import LoadingSpinner from '../components/LoadingSpinner';
 import { ArrowLeft, Edit3, User, SearchX } from 'lucide-react';
 
-/**
- * Course detail page showing all information about a single course.
- * Admin users see an "Edit" button.
- */
 export default function CourseDetailPage() {
   const { courseId } = useParams();
   const { user } = useAuthContext();
 
-  const { data: course, loading, error } = useFetchData(
+  const { data: publicCourse, loading, error } = useFetchData(
     () => getCourseByCode(courseId),
     [courseId]
   );
+
+  const [realtimeCourse, setRealtimeCourse] = useState(null);
+
+  useEffect(() => {
+    if (!user) return () => {};
+
+    const unsubscribe = subscribeToCourse(courseId, (course, err) => {
+      if (err) {
+        console.error('Error en suscripción realtime:', err);
+        return;
+      }
+      setRealtimeCourse(course);
+    });
+
+    return () => unsubscribe();
+  }, [user, courseId]);
+
+  const course = user ? (realtimeCourse || publicCourse) : publicCourse;
 
   useEffect(() => {
     if (course) {
